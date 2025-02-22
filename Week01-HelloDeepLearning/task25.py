@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 np.random.seed(123)
 
+
 def make_one_move(current_step):
     dice = np.random.randint(1, 7)
 
@@ -14,8 +15,8 @@ def make_one_move(current_step):
     else:
         steps_up = np.random.randint(1, 7)
 
-
     return max(0, current_step + steps_up)
+
 
 def make_one_walk():
     walk = [0]
@@ -23,6 +24,7 @@ def make_one_walk():
         walk.append(make_one_move(walk[-1]))
 
     return walk
+
 
 def main():
     all_walks = [make_one_walk() for _ in range(5)]

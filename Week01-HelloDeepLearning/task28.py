@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 np.random.seed(123)
 
+
 def make_one_move(current_step):
     clumsyness = np.random.rand()
     dice = np.random.randint(1, 7)
@@ -15,8 +16,8 @@ def make_one_move(current_step):
     else:
         steps_up = np.random.randint(1, 7)
 
-
     return 0 if clumsyness <= 0.005 else max(0, steps_up + current_step)
+
 
 def make_one_walk():
     walk = [0]
@@ -25,9 +26,10 @@ def make_one_walk():
 
     return walk
 
+
 def main():
     all_walks = [make_one_walk() for _ in range(500)]
-    
+
     np_all_walks = np.array(all_walks)
     last_steps = np_all_walks[:, -1]
 
