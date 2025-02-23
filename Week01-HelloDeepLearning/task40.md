@@ -29,11 +29,11 @@
 ## What is the Transformer architecture designed for?
 Големи езикови модели.
 ## What is the innovation that the Transformer architecture has?
-Меьанизъм на вниманието (attention mechanism).
+Механизъм на вниманието (attention mechanism).
 ## What is the key point about GPT-3?
 Има 175 милиарда параметри - безпрецедентно голям брой до този момент
 ## Is machine learning more efficient at learning than humans? Why?
-Не, защото машиното самообучение се нуждае от много голям брой данни (500 милиарда думи), за да се научи. Хората не се нуждаят от толкова много данни.
+Не, защото машинното самообучение се нуждае от много голям брой данни (500 милиарда думи), за да се научи. Хората не се нуждаят от толкова много данни.
 ## What is "the bitter truth"?
 Големият напредък на изкуствения интелект се дължи само и единствено на наличието на повече данни и повече компютърна мощ.
 ## What is one reason why ChatGPT is not conscious?
