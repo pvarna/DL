@@ -13,7 +13,7 @@ def sigmoid(x):
 class Xor:
     dataset = [(0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)]
     eps = 0.001
-    learning_rate = 0.001
+    # learning_rate = 0.001 --> it gets worse if I use it
 
     def __init__(self, w11, w12, b1, w13, w14, b2, w21, w22, b3):
         self.w11 = w11
