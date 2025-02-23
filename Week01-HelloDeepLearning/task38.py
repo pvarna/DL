@@ -13,6 +13,7 @@ def sigmoid(x):
 class Xor:
     dataset = [(0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)]
     eps = 0.001
+
     # learning_rate = 0.001 --> it gets worse if I use it
 
     def __init__(self, w11, w12, b1, w13, w14, b2, w21, w22, b3):
@@ -58,7 +59,10 @@ class Xor:
         return partial_derivatives
 
     def train(self, epochs):
-        params = [self.w11, self.w12, self.b1, self.w13, self.w14, self.b2, self.w21, self.w22, self.b3]
+        params = [
+            self.w11, self.w12, self.b1, self.w13, self.w14, self.b2, self.w21,
+            self.w22, self.b3
+        ]
         initial_loss = self.calculate_loss(*params)
         print(f"Initial loss: {initial_loss}")
 
@@ -77,10 +81,11 @@ class Xor:
     def forward(self, x1, x2):
         or_output = self.sigmoid(self.w11 * x1 + self.w12 * x2 + self.b1)
         nand_output = self.sigmoid(self.w13 * x1 + self.w14 * x2 + self.b2)
-        and_output = self.sigmoid(self.w21 * or_output + self.w22 * nand_output + self.b3)
+        and_output = self.sigmoid(self.w21 * or_output +
+                                  self.w22 * nand_output + self.b3)
 
         return and_output
-    
+
     def test(self):
         for x1, x2, y in self.dataset:
             output = self.forward(x1, x2)
