@@ -74,6 +74,7 @@ def main():
     train_model(w1_or, w2_or, bias_or, create_dataset_or())
 
     # the sigmoid function changes w1 and w1 to be bigger than 1
+    # it ensures that the outputs are between 0 and 1
 
 
 if __name__ == '__main__':
