@@ -6,10 +6,6 @@ def initialize_weights(x, y):
     return np.random.uniform(x, y)
 
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-
 class Xor:
     dataset = [(0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)]
     eps = 0.001

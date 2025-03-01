@@ -9,7 +9,7 @@
 ## What is the difference between loss functions and metrics?
 Функцията на загуба се използва по време на обучение на модела, а метрики на модела (например колко добре се справя) могат да се правят по всяко време - например след като е натрениран.
 ## Why is the use of mean squared error preferred to the use of mean absolute error?
-Средната абсолютна грешка не е диференцируема във всички точки
+Средната абсолютна грешка не е диференцируема във всички точки. Също, когато сложим квадрата наказваме по-силно големите грешки.
 ## Why can't we cube the difference to get the mean error instead of squaring it?
 Ако разликата между предвидената стойност и истинската стойност е отрицателно число, то и повдигнато на 3-та степен също ще е отрицателно, което означава, че така ще намалим общата грешка, което не е очаквано - тя трябва само да се увеличава. 
 ## Why is the derivative of the loss function beneficial during model training?

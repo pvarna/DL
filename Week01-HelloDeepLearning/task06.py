@@ -516,6 +516,7 @@ def main():
     # it is not normal for the mean to me that high
     # seems like the 'mean' statistics doesn't handle outliers very well
     # if there are outliers, the 'median' statistics is better
+    # whenever we're filling in numerical values, we should always use the median as it more accurately represents the true average value
 
 
 if __name__ == '__main__':

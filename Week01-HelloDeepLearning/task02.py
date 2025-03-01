@@ -65,8 +65,8 @@ def main():
     ]
     np_height_in = np.array(height_in)
     np_height_metres = np_height_in * INCHES_TO_METRES_MULTIPLIER
-    print(f"np_height_in={np_height_in}")
-    print(f"np_height_metres={np_height_metres}")
+    print(f'{np_height_in=}')
+    print(f'{np_height_metres=}')
 
 
 if __name__ == '__main__':

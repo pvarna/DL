@@ -29,7 +29,7 @@ def main():
     plt.hist(life_exp)
     plt.show()
     # 10 bins by default
-    # the 8th bin contains the most observations
+    # the bin ~70-74 contains the most observations
 
 
 if __name__ == '__main__':

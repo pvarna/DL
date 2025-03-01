@@ -17,9 +17,9 @@ def main():
     print(f"Before throw step = {current_step}")
 
     steps_up = 0
-    if random_integer1 in [1, 2]:
+    if random_integer1 in {1, 2}:
         steps_up = -1
-    elif random_integer1 in [3, 4, 5]:
+    elif random_integer1 in {3, 4, 5}:
         steps_up = 1
     else:
         steps_up = np.random.randint(1, 7)

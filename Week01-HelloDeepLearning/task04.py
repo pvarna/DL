@@ -136,13 +136,14 @@ def main():
         215, 175, 205, 210, 205, 208, 215, 180, 200, 230, 211, 230, 190, 220,
         180, 205, 190, 180, 205, 190, 195
     ]
+
+    # position = index + 1
     np_height_in = np.array(height_in)
     np_weight_lb = np.array(weight_lb)
-    print(f"Weight at position 51: {np_weight_lb[51]}")
+    print(f"Weight at position 51: {np_weight_lb[50]}")
     print(
-        f"Sub-array: {np_height_in[101:111+1]}"
-    )  # my output here is [74 72 73 69 72 73 75 75 73 72 72] which is different from the example one
-
+        f"Sub-array: {np_height_in[100:111]}"
+    )
 
 if __name__ == '__main__':
     main()
