@@ -6,16 +6,14 @@ import math
 
 
 class Value:
-    data: float = 0.0
-    _prev: Set["Value"] = set()
-    _op: str = ''
-    gradient: float = 0.0
-    label: str = ""
 
     def __init__(self, data: float, label: str) -> None:
         self.data = data
         self.label = label
         self._backward = lambda: None
+        self._prev = set()
+        self._op: chr = ''
+        self.gradient = 0.0
 
     def __repr__(self) -> str:
         return f"Value(data={self.data})"

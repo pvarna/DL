@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 
 
 class Value:
-    data: float = 0.0
 
     def __init__(self, data: float) -> None:
         self.data = data

@@ -5,12 +5,11 @@ from typing import Set, Tuple, List, TypeAlias
 
 
 class Value:
-    data: float = 0.0
-    _prev: Set["Value"] = set()
-    _op: chr = ''
 
     def __init__(self, data: float) -> None:
         self.data = data
+        self._prev = set()
+        self._op: chr = ''
 
     def __repr__(self) -> str:
         return f"Value(data={self.data})"

@@ -4,11 +4,10 @@ from typing import Set
 
 
 class Value:
-    data: float = 0.0
-    _prev: Set["Value"] = set()
 
     def __init__(self, data: float) -> None:
         self.data = data
+        self._prev = set()
 
     def __repr__(self) -> str:
         return f"Value(data={self.data})"
