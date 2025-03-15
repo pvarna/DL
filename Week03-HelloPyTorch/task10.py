@@ -159,8 +159,8 @@ def train_model(dataloader_training, dataloader_validation):
     optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE)
     criterion = nn.BCELoss()
 
-    training_metric = torchmetrics.F1Score(task="binary")
-    validation_metric = torchmetrics.F1Score(task="binary")
+    training_metric = torchmetrics.F1Score(task="binary", average="micro")
+    validation_metric = torchmetrics.F1Score(task="binary", average="micro")
 
     training_losses = []
     validation_losses = []
