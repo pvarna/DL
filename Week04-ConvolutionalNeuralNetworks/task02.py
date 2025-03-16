@@ -160,7 +160,7 @@ def main():
     print(f"F1 score on test set: {f1_score:.16f}")
 
     # The model doesn't perform very well (F1 score is ~0.56)
-    # https://encord.com/blog/f1-score-in-machine-learning/ --> here is says it should be >0.8
+    # https://encord.com/blog/f1-score-in-machine-learning/ --> here it says it should be >0.8
 
 
 if __name__ == '__main__':
