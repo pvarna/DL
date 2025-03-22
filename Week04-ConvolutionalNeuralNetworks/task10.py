@@ -101,10 +101,10 @@ class AlphabetNet(nn.Module):
         return self.final_layer(x)
 
 
-class OmniglotTwpInputNet(nn.Module):
+class OmniglotTwoInputNet(nn.Module):
 
     def __init__(self):
-        super(OmniglotTwpInputNet, self).__init__()
+        super(OmniglotTwoInputNet, self).__init__()
         self.image_net = ImageNet()
         self.alphabet_net = AlphabetNet()
 
@@ -243,7 +243,7 @@ def main():
                                             batch_size=BATCH_SIZE,
                                             shuffle=False)
 
-    net = OmniglotTwpInputNet()
+    net = OmniglotTwoInputNet()
     optimizer = optim.AdamW(net.parameters(), lr=LEARNING_RATE)
     f1_metric = torchmetrics.F1Score(task="multiclass",
                                      average="macro",
