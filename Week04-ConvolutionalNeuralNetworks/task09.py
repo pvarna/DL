@@ -6,24 +6,44 @@ import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
+import glob
+import os
+from PIL import Image
 
 
 class OmniglotDataset(Dataset):
 
     def __init__(self, path_to_images, transformations):
         super().__init__()
-        self.image_folder = ImageFolder(path_to_images, transformations)
+        images = []
+        alphabets = []
+        labels = []
+        for file in sorted(
+                glob.glob(path_to_images + os.path.sep + "**",
+                          recursive=True)):
+            if os.path.isfile(file):
+                split_filepath = file.split(os.path.sep)
+                images.append(file)
+                alphabets.append(split_filepath[-3])
+                labels.append(f"{split_filepath[-3]}_{split_filepath[-2]}")
+
+        alphabets = torch.tensor(pd.get_dummies(alphabets,
+                                                dtype=int).values).float()
+        labels = pd.get_dummies(labels,
+                                dtype=int).values.argmax(axis=1).tolist()
+
+        self.data = list(zip(images, alphabets, labels))
+        self.transformations = transformations
 
     def __len__(self):
-        return len(self.image_folder)
+        return len(self.data)
 
     def __getitem__(self, index):
-        image_as_tensor, label = self.image_folder[index]
+        image_path, alphabet, label = self.data[index]
+        image = Image.open(image_path).convert("L")
+        image = self.transformations(image)
 
-        one_hot_encoding_tensor = torch.zeros(len(self.image_folder.classes))
-        one_hot_encoding_tensor[label] = 1
-
-        return image_as_tensor, one_hot_encoding_tensor, label
+        return image, alphabet, label
 
 
 def main():
@@ -32,8 +52,8 @@ def main():
          transforms.Resize((64, 64))])
 
     dataset = OmniglotDataset("../DATA/omniglot_train", train_transforms)
-    size = dataset.__len__()
-    image_tensor, _, _ = last_element = dataset.__getitem__(size - 1)
+    size = len(dataset)
+    image_tensor, _, _ = last_element = dataset[-1]
     print(f"Number of instances: {size}")
     print(f"Last item: {last_element}")
 
