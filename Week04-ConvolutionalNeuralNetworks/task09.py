@@ -1,10 +1,6 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import torch
-import torch.nn as nn
 import pandas as pd
-from torch.utils.data import Dataset, DataLoader
-from torchvision.datasets import ImageFolder
+from torch.utils.data import Dataset
 from torchvision import transforms
 import glob
 import os
