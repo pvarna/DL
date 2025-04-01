@@ -28,7 +28,7 @@ class Net(nn.Module):
 
         init.kaiming_uniform_(self.fc1.weight, nonlinearity="leaky_relu")
         init.kaiming_uniform_(self.fc2.weight, nonlinearity="leaky_relu")
-        init.kaiming_uniform_(self.fc3.weight, nonlinearity="leaky_relu")
+        init.kaiming_uniform_(self.fc3.weight, nonlinearity="sigmoid")
 
     def forward(self, x):
         x = self.fc1(x)

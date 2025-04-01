@@ -62,9 +62,6 @@ def train_epoch(dataloader_train, optimizer, net, criterion, i):
     for inputs, targets in tqdm(dataloader_train, desc=f"Epoch {i+1}"):
         optimizer.zero_grad()
 
-        # inputs = inputs.float()
-        # targets = targets.float().unsqueeze(1)
-
         outputs = net(inputs)
         loss = criterion(outputs, targets)
         loss.backward()

@@ -279,10 +279,10 @@ def main():
     net = OmniglotTwoOutputNet()
     optimizer = optim.AdamW(net.parameters(), lr=LEARNING_RATE)
     characters_f1_metric = torchmetrics.F1Score(task="multiclass",
-                                                average="macro",
+                                                average="micro",
                                                 num_classes=CHARACTERS_COUNT)
     alphabets_f1_metric = torchmetrics.F1Score(task="multiclass",
-                                               average="macro",
+                                               average="micro",
                                                num_classes=ALHABETS_COUNT)
 
     train_model(dataloader_train,

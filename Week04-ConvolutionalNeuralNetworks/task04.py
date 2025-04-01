@@ -18,23 +18,23 @@ DROPOUT_PROBABILITY = 0.2
 
 class Net(nn.Module):
 
-    def __init__(self):
+    def __init__(self, dropout_probability=DROPOUT_PROBABILITY):
         super(Net, self).__init__()
         self.fc1 = nn.Linear(9, 128)
         self.bn1 = nn.BatchNorm1d(128)
-        self.d1 = nn.Dropout(p=DROPOUT_PROBABILITY)
+        self.d1 = nn.Dropout(p=dropout_probability)
 
         self.fc2 = nn.Linear(128, 128)
         self.bn2 = nn.BatchNorm1d(128)
-        self.d2 = nn.Dropout(p=DROPOUT_PROBABILITY)
+        self.d2 = nn.Dropout(p=dropout_probability)
 
         self.fc3 = nn.Linear(128, 64)
         self.bn3 = nn.BatchNorm1d(64)
-        self.d3 = nn.Dropout(p=DROPOUT_PROBABILITY)
+        self.d3 = nn.Dropout(p=dropout_probability)
 
         self.fc4 = nn.Linear(64, 32)
         self.bn4 = nn.BatchNorm1d(32)
-        self.d4 = nn.Dropout(p=DROPOUT_PROBABILITY)
+        self.d4 = nn.Dropout(p=dropout_probability)
 
         self.fc5 = nn.Linear(32, 1)
 

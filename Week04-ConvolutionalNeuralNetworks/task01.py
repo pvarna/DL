@@ -21,8 +21,8 @@ def main():
     water_potability_dataset = WaterPotabilityDataset(
         "../DATA/water_train.csv")
 
-    print(f"Number of instances: {water_potability_dataset.__len__()}")
-    print(f"Fifth item: {water_potability_dataset.__getitem__(4)}")
+    print(f"Number of instances: {len(water_potability_dataset)}")
+    print(f"Fifth item: {water_potability_dataset[4]}")
 
     water_potability_dataloader = DataLoader(water_potability_dataset,
                                              batch_size=2,
