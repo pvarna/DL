@@ -116,7 +116,7 @@ def main():
     shapes_img = Image.open("../DATA/w05_shapes.png")
 
     first_plot(chess_pieces_img, text_page_img)
-    second_plot(fruits_img, methods)
+    second_plot(fruits_img, methods) # I would recomment the Li thresholding
     third_plot(shapes_img)
 
 
