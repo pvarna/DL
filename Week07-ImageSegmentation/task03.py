@@ -32,9 +32,12 @@ class MyUNet(nn.Module):
         ])
 
         self.decoder = nn.ModuleList([
-            self.my_convolutional_block(512, 256),
-            self.my_convolutional_block(256, 128),
-            self.my_convolutional_block(128, 64)
+            # Input: 256 (from upconv[0]) + 512 (from encoder[2] skip) = 768
+            self.my_convolutional_block(256 + 512, 256),
+            # Input: 128 (from upconv[1]) + 256 (from encoder[1] skip) = 384
+            self.my_convolutional_block(128 + 256, 128),
+            # Input: 64 (from upconv[2]) + 128 (from encoder[0] skip) = 192
+            self.my_convolutional_block(64 + 128, 64)
         ])
 
         self.final_conv_layer = nn.Conv2d(64, output_channels, kernel_size=1)
@@ -43,6 +46,7 @@ class MyUNet(nn.Module):
         skip_connections = []
 
         x = self.initial_conv_layer(x)
+        skip_connections.append(x)
 
         for encoder_block, pool in zip(self.encoder, self.pooling_layers):
             x = encoder_block(x)
