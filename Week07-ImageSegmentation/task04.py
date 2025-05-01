@@ -13,6 +13,74 @@ IMAGE_DIR = "../DATA/segmentation_cats_dogs/images"
 MASK_DIR = "../DATA/segmentation_cats_dogs/annotations"
 SEED = 42
 BATCH_SIZE = 16
+LEARNING_RATE = 0.001
+SIZE = (256, 256)
+
+
+class MyUNet(nn.Module):
+
+    def __init__(self, input_channels, output_channels):
+        super().__init__()
+        self.initial_conv_layer = nn.Conv2d(input_channels,
+                                            64,
+                                            kernel_size=3,
+                                            padding=1)
+
+        self.encoder = nn.ModuleList([
+            self.my_convolutional_block(64, 128),
+            self.my_convolutional_block(128, 256),
+            self.my_convolutional_block(256, 512)
+        ])
+
+        self.pooling_layers = nn.ModuleList([
+            nn.MaxPool2d(kernel_size=2),
+            nn.MaxPool2d(kernel_size=2),
+            nn.MaxPool2d(kernel_size=2)
+        ])
+
+        self.upconv_layers = nn.ModuleList([
+            nn.ConvTranspose2d(512, 256, kernel_size=2, stride=2),
+            nn.ConvTranspose2d(256, 128, kernel_size=2, stride=2),
+            nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2)
+        ])
+
+        self.decoder = nn.ModuleList([
+            # Input: 256 (from upconv[0]) + 512 (from encoder[2] skip) = 768
+            self.my_convolutional_block(256 + 512, 256),
+            # Input: 128 (from upconv[1]) + 256 (from encoder[1] skip) = 384
+            self.my_convolutional_block(128 + 256, 128),
+            # Input: 64 (from upconv[2]) + 128 (from encoder[0] skip) = 192
+            self.my_convolutional_block(64 + 128, 64)
+        ])
+
+        self.final_conv_layer = nn.Conv2d(64, output_channels, kernel_size=1)
+
+    def forward(self, x):
+        skip_connections = []
+
+        x = self.initial_conv_layer(x)
+        skip_connections.append(x)
+
+        for encoder_block, pool in zip(self.encoder, self.pooling_layers):
+            x = encoder_block(x)
+            skip_connections.append(x)
+            x = pool(x)
+
+        for upconv, decoder_block in zip(self.upconv_layers, self.decoder):
+            x = upconv(x)
+            skip_x = skip_connections.pop()
+            x = torch.cat((x, skip_x), dim=1)
+            x = decoder_block(x)
+
+        x = self.final_conv_layer(x)
+        return x
+
+    def my_convolutional_block(self, in_channels, out_channels):
+        return nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+            nn.ReLU())
 
 
 class CatsDogsSegmentationDataset(Dataset):
@@ -27,8 +95,8 @@ class CatsDogsSegmentationDataset(Dataset):
         return len(self.image_paths)
 
     def __getitem__(self, idx):
-        image = Image.open(self.image_paths[idx]).convert("RGB")
-        mask = Image.open(self.mask_paths[idx]).convert("L")
+        image = Image.open(self.image_paths[idx]).convert("RGB").resize(SIZE)
+        mask = Image.open(self.mask_paths[idx]).convert("L").resize(SIZE)
 
         image = functional.to_tensor(image)
         mask = functional.pil_to_tensor(mask)[0]
@@ -75,6 +143,7 @@ def train_epoch(train_loader, net, optimizer, criterion, i):
 
     return average_loss
 
+
 def evaluate_model(val_loader, net, criterion):
     net.eval()
     total_loss = 0.0
@@ -91,14 +160,57 @@ def evaluate_model(val_loader, net, criterion):
     return average_loss
 
 
+def train_model(train_loader, val_loader, net, optimizer, criterion,
+                num_epochs):
+    train_losses = []
+    val_losses = []
+
+    for epoch in range(num_epochs):
+        print(f"Epoch {epoch}/{num_epochs}")
+        train_loss = train_epoch(train_loader, net, optimizer, criterion,
+                                 epoch)
+        val_loss = evaluate_model(val_loader, net, criterion)
+
+        train_losses.append(train_loss)
+        val_losses.append(val_loss)
+
+    plot_losses(train_losses, val_losses, title="Training vs Validation Loss")
+
+
+def plot_losses(train_losses, val_losses, title):
+    plt.figure(figsize=(8, 5))
+    plt.plot(train_losses, label='Training Loss')
+    plt.plot(val_losses, label='Validation Loss')
+    plt.title(title)
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
 def main():
     dataset = CatsDogsSegmentationDataset(IMAGE_DIR, MASK_DIR)
 
     train_set, val_set, test_set = split_dataset(dataset)
 
     train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True)
-    val_loader = DataLoader(val_set, batch_size=BATCH_SIZE, shuffle=True)
-    test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=True)
+    val_loader = DataLoader(val_set, batch_size=BATCH_SIZE, shuffle=False)
+    test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=False)
+
+    net = MyUNet(input_channels=3, output_channels=3)
+
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.AdamW(net.parameters(), lr=LEARNING_RATE)
+
+    train_model(train_loader,
+                val_loader,
+                net,
+                optimizer,
+                criterion,
+                num_epochs=10)
+    # 2:40 hours for a single epoch 💀
 
 
 if __name__ == '__main__':
