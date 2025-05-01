@@ -8,6 +8,7 @@ from torch.utils.data import Dataset, DataLoader, random_split
 from PIL import Image
 from torchvision.transforms import functional
 from tqdm import tqdm
+from torchmetrics.classification import Accuracy, JaccardIndex
 
 IMAGE_DIR = "../DATA/segmentation_cats_dogs/images"
 MASK_DIR = "../DATA/segmentation_cats_dogs/annotations"
@@ -144,18 +145,30 @@ def train_epoch(train_loader, net, optimizer, criterion, i):
     return average_loss
 
 
-def evaluate_model(val_loader, net, criterion):
+def evaluate_model(loader, net, criterion):
     net.eval()
     total_loss = 0.0
 
+    accuracy_metric = Accuracy(num_classes=3, task="multiclass")
+    iou_metric = JaccardIndex(num_classes=3, task="multiclass")
+
     with torch.no_grad():
-        for images, masks in tqdm(val_loader, desc="Evaluating..."):
+        for images, masks in tqdm(loader, desc="Evaluating..."):
             outputs = net(images)
             loss = criterion(outputs, masks)
             total_loss += loss.item() * images.size(0)
 
-    average_loss = total_loss / len(val_loader.dataset)
+            preds = outputs.argmax(dim=1)
+            accuracy_metric.update(preds, masks)
+            iou_metric.update(preds, masks)
+
+    average_loss = total_loss / len(loader.dataset)
+    acc = accuracy_metric.compute().item()
+    iou = iou_metric.compute().item()
+
     print(f"Average evaluation loss: {average_loss:.4f}")
+    print(f"Pixel Accuracy: {acc:.4f}")
+    print(f"Mean IoU: {iou:.4f}")
 
     return average_loss
 
@@ -204,13 +217,15 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.AdamW(net.parameters(), lr=LEARNING_RATE)
 
-    train_model(train_loader,
-                val_loader,
-                net,
-                optimizer,
-                criterion,
-                num_epochs=10)
+    # train_model(train_loader,
+    #             val_loader,
+    #             net,
+    #             optimizer,
+    #             criterion,
+    #             num_epochs=10)
     # 2:40 hours for a single epoch 💀
+    
+    evaluate_model(test_loader, net, criterion)
 
 
 if __name__ == '__main__':
