@@ -8,6 +8,7 @@ import torchvision.transforms as transforms
 import os
 from tqdm import tqdm
 from torch.optim import AdamW
+from torchmetrics.image.fid import FrechetInceptionDistance
 
 ROOT_DIR = os.path.join("..", "DATA", "pokemon_sprites")
 Z_DIM = 64
@@ -15,6 +16,7 @@ IMAGE_SIZE = 64
 NUM_EPOCHS = 20
 BATCH_SIZE = 32
 LEARNING_RATE = 0.0001
+NUM_CHANNELS = 3
 
 
 class LinearGenerator(nn.Module):
@@ -158,12 +160,36 @@ def display_images(rows, cols, images, title):
     plt.tight_layout()
     plt.show()
 
+def calculate_fid(generator, dataloader, z_dim, image_size, num_channels):
+    fid = FrechetInceptionDistance(feature=64)
+
+    generator.eval()
+
+    for real_flat in tqdm(dataloader, desc="Processing batches for FID"):
+        cur_batch_size = real_flat.shape[0]
+        real_images = real_flat.view(cur_batch_size, num_channels, image_size, image_size)
+        real_images_uint8 = (real_images.clamp(0, 1) * 255).to(torch.uint8)
+
+        with torch.no_grad():
+            noise = torch.randn(cur_batch_size, z_dim)
+            fake_flat = generator(noise)
+
+        fake_images = fake_flat.view(cur_batch_size, num_channels, image_size, image_size)
+        fake_images_uint8 = (fake_images.clamp(0, 1) * 255).to(torch.uint8)
+
+        fid.update(real_images_uint8, real=True)
+        fid.update(fake_images_uint8, real=False)
+
+    print("Computing final FID score...")
+    fid_score = fid.compute()
+    print(f"FID Score (feature=64): {fid_score.item():.4f}")
+    return fid_score.item()
 
 def main():
     dataset = PokemonDataset(ROOT_DIR, IMAGE_SIZE)
     dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
 
-    image_dimension = 3 * IMAGE_SIZE * IMAGE_SIZE
+    image_dimension = NUM_CHANNELS * IMAGE_SIZE * IMAGE_SIZE
 
     gen = LinearGenerator(Z_DIM, image_dimension)
     disc = LinearDiscriminator(image_dimension)
@@ -171,9 +197,10 @@ def main():
     gen_opt = AdamW(gen.parameters(), lr=LEARNING_RATE)
     disc_opt = AdamW(disc.parameters(), lr=LEARNING_RATE)
 
-    train_models(dataloader, gen, disc, gen_opt, disc_opt, NUM_EPOCHS)
+    # train_models(dataloader, gen, disc, gen_opt, disc_opt, NUM_EPOCHS)
 
     evaluate_model(gen)
+    calculate_fid(gen, dataloader, Z_DIM, IMAGE_SIZE, NUM_CHANNELS)
 
 
 if __name__ == '__main__':
