@@ -218,7 +218,6 @@ def main():
     #             optimizer,
     #             criterion,
     #             num_epochs=10)
-    # 1:40 hours for a single epoch 💀
 
     evaluate_model(test_loader, net, criterion)
 
