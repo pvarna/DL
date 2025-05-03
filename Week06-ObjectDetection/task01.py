@@ -97,7 +97,7 @@ def main():
         nn.ReLU()
     ])
 
-    binary_net.add_module("new_module", new_module)
+    binary_net.feature_extractor.add_module("new_module", new_module)
 
     print(
         f"Number of parameters in CNN for binary classification with new module: {count_parameters(binary_net)}"
