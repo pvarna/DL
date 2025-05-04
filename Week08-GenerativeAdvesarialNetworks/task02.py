@@ -45,6 +45,56 @@ class LinearDiscriminator(nn.Module):
         return self.discriminator(x)
 
 
+class ConvolutionalGenerator(nn.Module):
+
+    def __init__(self, input_dimensions, output_dimensions):
+        super().__init__()
+
+        self.generator = nn.Sequential(
+            self.gen_block(input_dimensions, 256), self.gen_block(256, 512),
+            self.gen_block(512, 1024),
+            nn.ConvTranspose2d(1024,
+                               output_dimensions,
+                               kernel_size=1,
+                               stride=1), nn.Sigmoid())
+
+    def gen_block(self, in_channels, out_channels):
+        return nn.Sequential(
+            nn.ConvTranspose2d(in_channels,
+                               out_channels,
+                               kernel_size=1,
+                               stride=1), nn.BatchNorm2d(out_channels),
+            nn.ReLU())
+
+    def forward(self, x):
+        x = x.unsqueeze(-1).unsqueeze(-1)
+        x = self.generator(x)
+        return x.view(x.size(0), -1)
+
+
+class ConvolutionalDiscriminator(nn.Module):
+
+    def __init__(self, input_dimensions):
+        super().__init__()
+
+        self.discriminator = nn.Sequential(
+            self.disc_block(input_dimensions, 1024),
+            self.disc_block(1024, 512), self.disc_block(512, 256),
+            nn.Conv2d(256, 1, kernel_size=1, stride=1))
+
+    def disc_block(self, input_dimensions, output_dimensions):
+        return nn.Sequential(
+            nn.Conv2d(input_dimensions,
+                      output_dimensions,
+                      kernel_size=1,
+                      stride=1), nn.LeakyReLU(0.2))
+
+    def forward(self, x):
+        x = x.unsqueeze(-1).unsqueeze(-1)
+        x = self.discriminator(x)
+        return x.view(x.size(0), -1)
+
+
 class GCGANGenerator(nn.Module):
 
     def __init__(self, input_dimensions):
@@ -98,6 +148,16 @@ def main():
     linear_discriminator = LinearDiscriminator(16)
     print(
         f"Number of total parameters in Discriminator (linear only): {count_parameters(linear_discriminator):,}"
+    )
+
+    convolutional_generator = ConvolutionalGenerator(5, 16)
+    print(
+        f"Number of total parameters in Generator (convolutions only): {count_parameters(convolutional_generator):,}."
+    )
+
+    convolutional_discriminator = ConvolutionalDiscriminator(16)
+    print(
+        f"Number of total parameters in Discriminator (convolutions only): {count_parameters(convolutional_discriminator):,}."
     )
 
     gcgan_generator = GCGANGenerator(5)
