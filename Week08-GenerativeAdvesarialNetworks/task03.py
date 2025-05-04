@@ -197,7 +197,7 @@ def main():
     gen_opt = AdamW(gen.parameters(), lr=LEARNING_RATE)
     disc_opt = AdamW(disc.parameters(), lr=LEARNING_RATE)
 
-    # train_models(dataloader, gen, disc, gen_opt, disc_opt, NUM_EPOCHS)
+    train_models(dataloader, gen, disc, gen_opt, disc_opt, NUM_EPOCHS)
 
     evaluate_model(gen)
     calculate_fid(gen, dataloader, Z_DIM, IMAGE_SIZE, NUM_CHANNELS)
