@@ -40,7 +40,7 @@ def main():
 
     dataset = TensorDataset(torch.from_numpy(X_train),
                             torch.from_numpy(y_train))
-    print(f"Length of training TensorDataset: {len(dataset)}")  # Fails...
+    print(f"Length of training TensorDataset: {len(dataset)}")
 
 
 if __name__ == '__main__':
