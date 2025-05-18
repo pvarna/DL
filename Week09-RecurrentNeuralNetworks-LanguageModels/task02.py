@@ -9,12 +9,13 @@ from tqdm import tqdm
 TRAIN_FILE = os.path.join("..", "DATA", "electricity_consumption",
                           "electricity_train.csv")
 TEST_FILE = os.path.join("..", "DATA", "electricity_consumption",
-                          "electricity_test.csv")
+                         "electricity_test.csv")
 
 NUM_EPOCHS = 3
 BATCH_SIZE = 32
 SAMPLES_PER_BATCH = 32
 LEARNING_RATE = 0.0001
+
 
 class ElectricityConsumptionNet(nn.Module):
 
@@ -57,6 +58,7 @@ def create_sequences(pd_dataframe, sequence_length):
 
     return np.array(input_sequences), np.array(targets)
 
+
 def train_epoch(train_dataloader, model, optimizer, criterion):
     running_loss = 0.0
 
@@ -73,12 +75,14 @@ def train_epoch(train_dataloader, model, optimizer, criterion):
     epoch_loss = running_loss / len(train_dataloader.dataset)
     return epoch_loss
 
+
 def train_model(train_dataloader, model, optimizer, criterion, num_epochs):
     model.train()
 
     for epoch in range(num_epochs):
         epoch_loss = train_epoch(train_dataloader, model, optimizer, criterion)
         print(f"Epoch {epoch}, Average MSE loss: {epoch_loss}")
+
 
 def evaluate_model(dataloader, model, criterion):
     model.eval()
@@ -95,6 +99,7 @@ def evaluate_model(dataloader, model, criterion):
     average_loss = running_loss / len(dataloader.dataset)
     return average_loss
 
+
 def main():
     electricity_pd_dataframe_train = pd.read_csv(TRAIN_FILE)
     electricity_pd_dataframe_test = pd.read_csv(TEST_FILE)
@@ -102,16 +107,22 @@ def main():
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    X_train, y_train = create_sequences(electricity_pd_dataframe_train, SAMPLES_PER_BATCH)
-    X_test, y_test = create_sequences(electricity_pd_dataframe_test, SAMPLES_PER_BATCH)
-    
+    X_train, y_train = create_sequences(electricity_pd_dataframe_train,
+                                        SAMPLES_PER_BATCH)
+    X_test, y_test = create_sequences(electricity_pd_dataframe_test,
+                                      SAMPLES_PER_BATCH)
+
     train_dataset = TensorDataset(torch.from_numpy(X_train),
-                            torch.from_numpy(y_train))
+                                  torch.from_numpy(y_train))
     test_dataset = TensorDataset(torch.from_numpy(X_test),
-                            torch.from_numpy(y_test))
-    
-    train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+                                 torch.from_numpy(y_test))
+
+    train_dataloader = DataLoader(train_dataset,
+                                  batch_size=BATCH_SIZE,
+                                  shuffle=True)
+    test_dataloader = DataLoader(test_dataset,
+                                 batch_size=BATCH_SIZE,
+                                 shuffle=False)
 
     train_model(train_dataloader, model, optimizer, criterion, NUM_EPOCHS)
     test_loss = evaluate_model(test_dataloader, model, criterion)
