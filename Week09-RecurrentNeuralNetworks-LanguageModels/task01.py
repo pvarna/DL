@@ -11,12 +11,11 @@ TRAIN_FILE = os.path.join("..", "DATA", "electricity_consumption",
 
 
 def create_sequences(pd_dataframe, sequence_length):
-    first_column = list(pd_dataframe.iloc[:, 0])
     second_column = list(pd_dataframe.iloc[:, 1])
 
     input_sequences, targets = [], []
     for starting_index in range(len(pd_dataframe) - sequence_length):
-        input_sequences.append(first_column[starting_index:starting_index +
+        input_sequences.append(second_column[starting_index:starting_index +
                                             sequence_length])
         targets.append(second_column[starting_index + sequence_length])
 
@@ -36,11 +35,9 @@ def main():
     print(f"First five training examples: {dummy_input_sequences[:5]}")
     print(f"First five target values: {dummy_targets[:5]}")
 
-    X_train, y_train = create_sequences(electricity_pd_dataframe, 5)
+    X_train, y_train = create_sequences(electricity_pd_dataframe, 96)
     print(f"{X_train.shape=}")
     print(f"{y_train.shape=}")
-
-    print(X_train[0])
 
     dataset = TensorDataset(torch.from_numpy(X_train), torch.from_numpy(y_train))
     print(f"Length of training TensorDataset: {len(dataset)}") # Fails...
