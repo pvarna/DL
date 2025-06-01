@@ -37,10 +37,10 @@ def create_training_set(names, vocabulary):
         xss.append(xs)
         yss.append(ys)
 
-    xs_tensor = torch.cat(xss, dim=0)
-    ys_tensor = torch.cat(yss, dim=0)
+    xss = torch.cat(xss, dim=0)
+    yss = torch.cat(yss, dim=0)
 
-    return xs_tensor, ys_tensor
+    return xss, yss
 
 
 def create_training_set_one_name(name, char_to_idx):
