@@ -20,3 +20,5 @@ rouge_score
 requests
 tabulate
 torch-fidelity
+seqeval
+protobuf
