@@ -1,3 +1,4 @@
+# Runtime
 numpy
 pandas
 matplotlib
@@ -5,8 +6,6 @@ PyQt6
 tqdm
 scikit-learn
 scikit-image
-yapf
-isort
 torch
 torchvision
 torchaudio
@@ -14,11 +13,14 @@ torchmetrics
 transformers
 sentencepiece
 datasets
-accelerate>=0.26.0
+accelerate
 evaluate
 rouge_score
-requests
-tabulate
-torch-fidelity
-seqeval
-protobuf
+graphviz
+openpyxl
+# Development
+mypy
+isort
+yapf
+coverage
+pytest
