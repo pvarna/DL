@@ -6,6 +6,7 @@ from dl_lib.nn import LeakyReLU, ReLU, Sequential, Sigmoid, Tanh
 
 
 class TestSigmoidForward(unittest.TestCase):
+
     def test_when_called_with_zero_then_returns_half(self):
         # Arrange
         layer = Sigmoid()
@@ -73,6 +74,7 @@ class TestSigmoidForward(unittest.TestCase):
 
 
 class TestTanhForward(unittest.TestCase):
+
     def test_when_called_with_zero_then_returns_zero(self):
         # Arrange
         layer = Tanh()
@@ -119,6 +121,7 @@ class TestTanhForward(unittest.TestCase):
 
 
 class TestReLUForward(unittest.TestCase):
+
     def test_when_called_with_positive_value_then_returns_same_value(self):
         # Arrange
         layer = ReLU()
@@ -187,6 +190,7 @@ class TestReLUForward(unittest.TestCase):
 
 
 class TestLeakyReLUForward(unittest.TestCase):
+
     def test_when_called_with_positive_value_then_returns_same_value(self):
         # Arrange
         layer = LeakyReLU()
@@ -267,6 +271,7 @@ class TestLeakyReLUForward(unittest.TestCase):
 
 
 class TestSequentialForward(unittest.TestCase):
+
     def test_when_called_with_single_module_then_applies_it(self):
         # Arrange
         model = Sequential(ReLU())
@@ -325,6 +330,7 @@ class TestSequentialForward(unittest.TestCase):
 
 
 class TestSequentialAppend(unittest.TestCase):
+
     def test_when_module_appended_then_it_is_applied_last(self):
         # Arrange
         model = Sequential(ReLU())
@@ -352,6 +358,7 @@ class TestSequentialAppend(unittest.TestCase):
 
 
 class TestSequentialExtend(unittest.TestCase):
+
     def test_when_extended_then_new_modules_are_applied_after_existing(self):
         # Arrange
         model1 = Sequential(ReLU())
@@ -381,6 +388,7 @@ class TestSequentialExtend(unittest.TestCase):
 
 
 class TestSequentialInsert(unittest.TestCase):
+
     def test_when_inserted_at_zero_then_module_is_applied_first(self):
         # Arrange
         model = Sequential(Sigmoid())
