@@ -9,8 +9,8 @@ class Module(abc.ABC):
     def forward(self, input: torch.Tensor) -> torch.Tensor:
         pass
 
-    def __call__(self, input: torch.Tensor) -> torch.Tensor:
-        return self.forward(input)
+    def __call__(self, *args, **kwargs) -> torch.Tensor:
+        return self.forward(*args, **kwargs)
 
 
 class Sigmoid(Module):
@@ -67,3 +67,96 @@ class Sequential(Module):
 
     def insert(self, index: int, module: Module) -> None:
         self._modules.insert(index, module)
+
+
+class Linear(Module):
+
+    def __init__(self,
+                 in_features: int,
+                 out_features: int,
+                 bias: bool = True) -> None:
+        self.in_features = in_features
+        self.out_features = out_features
+        sqrt_k = (1 / in_features)**0.5
+        self.weight = torch.empty(out_features,
+                                  in_features).uniform_(-sqrt_k, sqrt_k)
+        self.bias = torch.empty(out_features).uniform_(
+            -sqrt_k, sqrt_k) if bias else None
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        output = input @ self.weight.T
+
+        if self.bias is not None:
+            output = output + self.bias
+
+        return output
+
+
+class Softmax(Module):
+
+    def __init__(self, dim: int = None) -> None:
+        self.dim = dim
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        if self.dim is None:
+            raise TypeError("Dim should not be None")
+
+        exp_input = torch.exp(input)
+
+        return exp_input / exp_input.sum(dim=self.dim, keepdim=True)
+
+
+class Dropout(Module):
+
+    def __init__(self, p: float = 0.5) -> None:
+        self.p = p
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        if self.p == 0.0:
+            return input
+
+        mask = torch.rand_like(input) >= self.p
+
+        return input * mask / (1 - self.p)
+
+
+class BCEWithLogitsLoss(Module):
+
+    def __init__(self, reduction: str = 'mean', pos_weight=None) -> None:
+        self.reduction = reduction
+        self.pos_weight = pos_weight
+
+    def forward(self, input: torch.Tensor,
+                target: torch.Tensor) -> torch.Tensor:
+        probabilities = Sigmoid()(input)
+        weight = self.pos_weight if self.pos_weight is not None else 1.0
+
+        loss = -(weight * target * torch.log(probabilities) +
+                 (1 - target) * torch.log(1 - probabilities))
+
+        if self.reduction == 'none':
+            return loss
+        if self.reduction == 'mean':
+            return loss.mean()
+        if self.reduction == 'sum':
+            return loss.sum()
+
+
+class CrossEntropyLoss(Module):
+
+    def __init__(self, reduction: str = 'mean') -> None:
+        self.reduction = reduction
+
+    def forward(self, input: torch.Tensor,
+                target: torch.Tensor) -> torch.Tensor:
+        probabilities = Softmax(dim=-1)(input)
+        correct_probabilities = probabilities[torch.arange(input.shape[0]),
+                                              target]
+        loss = -torch.log(correct_probabilities)
+
+        if self.reduction == 'none':
+            return loss
+        if self.reduction == 'mean':
+            return loss.mean()
+        if self.reduction == 'sum':
+            return loss.sum()
