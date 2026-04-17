@@ -7,6 +7,31 @@ from dl_lib.nn import Linear
 
 class TestLinearInit(unittest.TestCase):
 
+    def test_when_called_with_in_features_none_then_raises_value_error(self):
+        # Arrange
+        in_features = None
+        out_features = 3
+
+        # Act & Assert
+        with self.assertRaises(ValueError):
+            Linear(in_features, out_features)
+
+    def test_when_called_with_out_features_none_then_raises_value_error(self):
+        # Arrange
+        in_features = 4
+        out_features = None
+
+        # Act & Assert
+        with self.assertRaises(ValueError):
+            Linear(in_features, out_features)
+
+    def test_when_bias_not_specified_then_bias_tensor_is_created(self):
+        # Act
+        layer = Linear(4, 3)
+
+        # Assert
+        self.assertIsNotNone(layer.bias)
+
     def test_when_constructed_then_weight_shape_is_correct(self):
         # Arrange
         expected = (3, 4)

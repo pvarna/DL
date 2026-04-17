@@ -5,6 +5,38 @@ import torch
 from dl_lib.optim import SGD
 
 
+class TestSGDInit(unittest.TestCase):
+
+    def test_when_parameters_none_then_raises_value_error(self):
+        # Act & Assert
+        with self.assertRaises(ValueError):
+            SGD(None)
+
+    def test_when_lr_not_specified_then_defaults_to_one_hundredth(self):
+        # Arrange
+        p = torch.tensor([1.0], requires_grad=True)
+        expected = 0.01
+
+        # Act
+        optimizer = SGD([p])
+        actual = optimizer.lr
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_momentum_not_specified_then_defaults_to_zero(self):
+        # Arrange
+        p = torch.tensor([1.0], requires_grad=True)
+        expected = 0.0
+
+        # Act
+        optimizer = SGD([p])
+        actual = optimizer.momentum
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+
 class TestSGDStep(unittest.TestCase):
 
     def test_when_called_once_then_params_are_updated(self):

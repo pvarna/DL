@@ -5,6 +5,27 @@ import torch
 from dl_lib.nn import BCEWithLogitsLoss
 
 
+class TestBCEWithLogitsLossInit(unittest.TestCase):
+
+    def test_when_reduction_not_specified_then_defaults_to_mean(self):
+        # Arrange
+        expected = 'mean'
+
+        # Act
+        layer = BCEWithLogitsLoss()
+        actual = layer.reduction
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_pos_weight_not_specified_then_defaults_to_none(self):
+        # Act
+        layer = BCEWithLogitsLoss()
+
+        # Assert
+        self.assertIsNone(layer.pos_weight)
+
+
 class TestBCEWithLogitsLossForward(unittest.TestCase):
 
     def test_when_reduction_is_none_then_output_shape_matches_input(self):

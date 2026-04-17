@@ -5,6 +5,20 @@ import torch
 from dl_lib.nn import Dropout
 
 
+class TestDropoutInit(unittest.TestCase):
+
+    def test_when_p_not_specified_then_defaults_to_half(self):
+        # Arrange
+        expected = 0.5
+
+        # Act
+        layer = Dropout()
+        actual = layer.p
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+
 class TestDropoutForward(unittest.TestCase):
 
     def test_when_p_is_zero_then_output_equals_input(self):

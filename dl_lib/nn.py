@@ -75,8 +75,14 @@ class Linear(Module):
                  in_features: int,
                  out_features: int,
                  bias: bool = True) -> None:
+        if in_features is None:
+            raise ValueError("in_features must be specified")
         self.in_features = in_features
+
+        if out_features is None:
+            raise ValueError("out_features must be specified")
         self.out_features = out_features
+
         sqrt_k = (1 / in_features)**0.5
         self.weight = torch.empty(out_features,
                                   in_features).uniform_(-sqrt_k, sqrt_k)

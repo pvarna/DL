@@ -5,6 +5,39 @@ import torch
 from dl_lib.optim import AdaGrad
 
 
+class TestAdaGradInit(unittest.TestCase):
+
+    def test_when_parameters_none_then_raises_value_error(self):
+        # Act & Assert
+        with self.assertRaises(ValueError):
+            AdaGrad(None)
+
+    def test_when_lr_not_specified_then_defaults_to_one_hundredth(self):
+        # Arrange
+        p = torch.tensor([1.0], requires_grad=True)
+        expected = 0.01
+
+        # Act
+        optimizer = AdaGrad([p])
+        actual = optimizer.lr
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_eps_not_specified_then_defaults_to_one_hundred_millionth(
+            self):
+        # Arrange
+        p = torch.tensor([1.0], requires_grad=True)
+        expected = 1e-8
+
+        # Act
+        optimizer = AdaGrad([p])
+        actual = optimizer.eps
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+
 class TestAdaGradStep(unittest.TestCase):
 
     def test_when_called_once_then_params_are_updated(self):

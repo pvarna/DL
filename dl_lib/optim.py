@@ -6,6 +6,8 @@ import torch
 class Optimizer(abc.ABC):
 
     def __init__(self, parameters: list[torch.Tensor]) -> None:
+        if parameters is None:
+            raise ValueError("parameters must be specified")
         self.parameters = list(parameters)
 
     @abc.abstractmethod

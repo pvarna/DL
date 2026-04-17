@@ -5,6 +5,20 @@ import torch
 from dl_lib.nn import Softmax
 
 
+class TestSoftmaxInit(unittest.TestCase):
+
+    def test_when_dim_not_specified_then_defaults_to_none(self):
+        # Arrange
+        expected = None
+
+        # Act
+        layer = Softmax()
+        actual = layer.dim
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+
 class TestSoftmaxForward(unittest.TestCase):
 
     def test_when_dim_is_none_then_raises_type_error(self):

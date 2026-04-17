@@ -5,6 +5,20 @@ import torch
 from dl_lib.nn import CrossEntropyLoss
 
 
+class TestCrossEntropyLossInit(unittest.TestCase):
+
+    def test_when_reduction_not_specified_then_defaults_to_mean(self):
+        # Arrange
+        expected = 'mean'
+
+        # Act
+        layer = CrossEntropyLoss()
+        actual = layer.reduction
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+
 class TestCrossEntropyLossForward(unittest.TestCase):
 
     def test_when_reduction_is_none_then_output_length_matches_batch(self):
