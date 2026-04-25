@@ -17,33 +17,19 @@ class TestMaxPool2dInit(unittest.TestCase):
         with self.assertRaises(ValueError):
             MaxPool2d(kernel_size, stride, padding)
 
-    def test_when_called_with_stride_none_then_defaults_to_kernel_size(self):
+    def test_when_optional_parameters_not_specified_then_defaults_are_applied(
+            self):
         # Arrange
         kernel_size = 2
-        stride = None
-        padding = 0
-        expected = kernel_size
+        expected_stride = kernel_size
+        expected_padding = 0
 
         # Act
-        layer = MaxPool2d(kernel_size, stride, padding)
-        actual = layer.stride
+        layer = MaxPool2d(kernel_size)
 
         # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_called_with_padding_none_then_defaults_to_zero(self):
-        # Arrange
-        kernel_size = 2
-        stride = 2
-        padding = None
-        expected = 0
-
-        # Act
-        layer = MaxPool2d(kernel_size, stride, padding)
-        actual = layer.padding
-
-        # Assert
-        self.assertEqual(actual, expected)
+        self.assertEqual(layer.stride, expected_stride)
+        self.assertEqual(layer.padding, expected_padding)
 
     def test_when_called_with_valid_arguments_then_initializes_attributes(
             self):
@@ -146,7 +132,3 @@ class TestMaxPool2dForward(unittest.TestCase):
 
         # Assert
         self.assertTrue(torch.allclose(actual, expected))
-
-
-if __name__ == '__main__':
-    unittest.main()

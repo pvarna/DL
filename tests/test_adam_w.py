@@ -12,68 +12,25 @@ class TestAdamWInit(unittest.TestCase):
         with self.assertRaises(ValueError):
             AdamW(None)
 
-    def test_when_lr_not_specified_then_defaults_to_one_thousandth(self):
-        # Arrange
-        p = torch.tensor([1.0], requires_grad=True)
-        expected = 0.001
-
-        # Act
-        optimizer = AdamW([p])
-        actual = optimizer.lr
-
-        # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_beta1_not_specified_then_defaults_to_nine_tenths(self):
-        # Arrange
-        p = torch.tensor([1.0], requires_grad=True)
-        expected = 0.9
-
-        # Act
-        optimizer = AdamW([p])
-        actual = optimizer.beta1
-
-        # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_beta2_not_specified_then_defaults_to_nine_hundred_ninety_nine_thousandths(
+    def test_when_optional_parameters_not_specified_then_defaults_are_applied(
             self):
         # Arrange
         p = torch.tensor([1.0], requires_grad=True)
-        expected = 0.999
+        expected_lr = 0.001
+        expected_beta1 = 0.9
+        expected_beta2 = 0.999
+        expected_eps = 1e-8
+        expected_weight_decay = 0.01
 
         # Act
         optimizer = AdamW([p])
-        actual = optimizer.beta2
 
         # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_eps_not_specified_then_defaults_to_one_hundred_millionth(
-            self):
-        # Arrange
-        p = torch.tensor([1.0], requires_grad=True)
-        expected = 1e-8
-
-        # Act
-        optimizer = AdamW([p])
-        actual = optimizer.eps
-
-        # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_weight_decay_not_specified_then_defaults_to_one_hundredth(
-            self):
-        # Arrange
-        p = torch.tensor([1.0], requires_grad=True)
-        expected = 0.01
-
-        # Act
-        optimizer = AdamW([p])
-        actual = optimizer.weight_decay
-
-        # Assert
-        self.assertEqual(actual, expected)
+        self.assertEqual(optimizer.lr, expected_lr)
+        self.assertEqual(optimizer.beta1, expected_beta1)
+        self.assertEqual(optimizer.beta2, expected_beta2)
+        self.assertEqual(optimizer.eps, expected_eps)
+        self.assertEqual(optimizer.weight_decay, expected_weight_decay)
 
 
 class TestAdamWStep(unittest.TestCase):

@@ -12,29 +12,19 @@ class TestSGDInit(unittest.TestCase):
         with self.assertRaises(ValueError):
             SGD(None)
 
-    def test_when_lr_not_specified_then_defaults_to_one_hundredth(self):
+    def test_when_optional_parameters_not_specified_then_defaults_are_applied(
+            self):
         # Arrange
         p = torch.tensor([1.0], requires_grad=True)
-        expected = 0.01
+        expected_lr = 0.01
+        expected_momentum = 0.0
 
         # Act
         optimizer = SGD([p])
-        actual = optimizer.lr
 
         # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_momentum_not_specified_then_defaults_to_zero(self):
-        # Arrange
-        p = torch.tensor([1.0], requires_grad=True)
-        expected = 0.0
-
-        # Act
-        optimizer = SGD([p])
-        actual = optimizer.momentum
-
-        # Assert
-        self.assertEqual(actual, expected)
+        self.assertEqual(optimizer.lr, expected_lr)
+        self.assertEqual(optimizer.momentum, expected_momentum)
 
 
 class TestSGDStep(unittest.TestCase):

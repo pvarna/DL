@@ -267,8 +267,8 @@ class _Pool2d(Module):
 class MaxPool2d(_Pool2d):
 
     def __init__(self, kernel_size: tuple[int, int] | int,
-                 stride: tuple[int, int] | int,
-                 padding: tuple[int, int] | int) -> None:
+                 stride: tuple[int, int] | int = None,
+                 padding: tuple[int, int] | int = None) -> None:
         super().__init__(kernel_size, stride, padding, float('-inf'),
                          torch.max)
 
@@ -276,8 +276,8 @@ class MaxPool2d(_Pool2d):
 class AvgPool2d(_Pool2d):
 
     def __init__(self, kernel_size: tuple[int, int] | int,
-                 stride: tuple[int, int] | int,
-                 padding: tuple[int, int] | int) -> None:
+                 stride: tuple[int, int] | int = None,
+                 padding: tuple[int, int] | int = None) -> None:
         super().__init__(kernel_size, stride, padding, 0.0, torch.mean)
 
 

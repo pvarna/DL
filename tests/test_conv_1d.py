@@ -56,27 +56,18 @@ class TestConv1dInit(unittest.TestCase):
         self.assertEqual(layer.stride, stride)
         self.assertEqual(layer.padding, padding)
 
-    def test_when_stride_not_specified_then_defaults_to_one(self):
+    def test_when_optional_parameters_not_specified_then_defaults_are_applied(
+            self):
         # Arrange
-        expected = 1
+        expected_stride = 1
+        expected_padding = 0
 
         # Act
         layer = Conv1d(in_channels=1, out_channels=1, kernel_size=3)
-        actual = layer.stride
 
         # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_padding_not_specified_then_defaults_to_zero(self):
-        # Arrange
-        expected = 0
-
-        # Act
-        layer = Conv1d(in_channels=1, out_channels=1, kernel_size=3)
-        actual = layer.padding
-
-        # Assert
-        self.assertEqual(actual, expected)
+        self.assertEqual(layer.stride, expected_stride)
+        self.assertEqual(layer.padding, expected_padding)
 
     def test_when_bias_not_specified_then_bias_tensor_is_created(self):
         # Act
