@@ -71,7 +71,3 @@ class TestSigmoidForward(unittest.TestCase):
 
         # Assert
         self.assertTrue((actual >= 0).all() and (actual <= 1).all())
-
-
-if __name__ == '__main__':
-    unittest.main()

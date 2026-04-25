@@ -12,9 +12,9 @@ python3 Week02-GradientDescent/Neurons/task06.py
 ```
 
 ```bash
-python3 -m unittest discover -s tests -v
+pytest tests/ -v
 ```
 
 ```bash
-python3 -m unittest tests.test_nn.TestSigmoidForward -v
+pytest tests/test_sigmoid.py::TestSigmoidForward -v
 ```
