@@ -50,7 +50,3 @@ class TestTanhForward(unittest.TestCase):
 
         # Assert
         self.assertTrue((actual >= -1).all() and (actual <= 1).all())
-
-
-if __name__ == '__main__':
-    unittest.main()
