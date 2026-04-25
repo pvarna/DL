@@ -89,7 +89,3 @@ class TestBCEWithLogitsLossForward(unittest.TestCase):
 
         # Assert
         self.assertIsInstance(actual, expected)
-
-
-if __name__ == '__main__':
-    unittest.main()

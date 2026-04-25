@@ -148,7 +148,3 @@ class TestLinearForward(unittest.TestCase):
 
         # Assert
         self.assertTrue(torch.allclose(actual, expected))
-
-
-if __name__ == '__main__':
-    unittest.main()

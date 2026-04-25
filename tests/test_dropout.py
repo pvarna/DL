@@ -63,7 +63,3 @@ class TestDropoutForward(unittest.TestCase):
 
         # Assert
         self.assertTrue((actual == 0.0).any())
-
-
-if __name__ == '__main__':
-    unittest.main()

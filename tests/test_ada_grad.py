@@ -73,7 +73,3 @@ class TestAdaGradStep(unittest.TestCase):
         delta_first = (p_before - p_after_first).abs()
         delta_second = (p_after_first - p_after_second).abs()
         self.assertTrue((delta_second < delta_first).all())
-
-
-if __name__ == '__main__':
-    unittest.main()

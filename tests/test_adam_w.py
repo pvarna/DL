@@ -113,7 +113,3 @@ class TestAdamWStep(unittest.TestCase):
 
         # Assert
         self.assertTrue(actual_adamw < actual_adam)
-
-
-if __name__ == '__main__':
-    unittest.main()

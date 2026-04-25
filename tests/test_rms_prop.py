@@ -85,7 +85,3 @@ class TestRMSpropStep(unittest.TestCase):
 
         # Assert
         self.assertTrue(torch.allclose(actual, expected, atol=1e-6))
-
-
-if __name__ == '__main__':
-    unittest.main()
