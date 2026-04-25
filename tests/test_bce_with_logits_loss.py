@@ -7,22 +7,16 @@ from dl_lib.nn import BCEWithLogitsLoss
 
 class TestBCEWithLogitsLossInit(unittest.TestCase):
 
-    def test_when_reduction_not_specified_then_defaults_to_mean(self):
+    def test_when_optional_parameters_not_specified_then_defaults_are_applied(
+            self):
         # Arrange
-        expected = 'mean'
+        expected_reduction = 'mean'
 
-        # Act
-        layer = BCEWithLogitsLoss()
-        actual = layer.reduction
-
-        # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_pos_weight_not_specified_then_defaults_to_none(self):
         # Act
         layer = BCEWithLogitsLoss()
 
         # Assert
+        self.assertEqual(layer.reduction, expected_reduction)
         self.assertIsNone(layer.pos_weight)
 
 

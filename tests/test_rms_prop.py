@@ -12,43 +12,21 @@ class TestRMSpropInit(unittest.TestCase):
         with self.assertRaises(ValueError):
             RMSprop(None)
 
-    def test_when_lr_not_specified_then_defaults_to_one_hundredth(self):
-        # Arrange
-        p = torch.tensor([1.0], requires_grad=True)
-        expected = 0.01
-
-        # Act
-        optimizer = RMSprop([p])
-        actual = optimizer.lr
-
-        # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_alpha_not_specified_then_defaults_to_ninety_nine_hundredths(
+    def test_when_optional_parameters_not_specified_then_defaults_are_applied(
             self):
         # Arrange
         p = torch.tensor([1.0], requires_grad=True)
-        expected = 0.99
+        expected_lr = 0.01
+        expected_alpha = 0.99
+        expected_eps = 1e-8
 
         # Act
         optimizer = RMSprop([p])
-        actual = optimizer.alpha
 
         # Assert
-        self.assertEqual(actual, expected)
-
-    def test_when_eps_not_specified_then_defaults_to_one_hundred_millionth(
-            self):
-        # Arrange
-        p = torch.tensor([1.0], requires_grad=True)
-        expected = 1e-8
-
-        # Act
-        optimizer = RMSprop([p])
-        actual = optimizer.eps
-
-        # Assert
-        self.assertEqual(actual, expected)
+        self.assertEqual(optimizer.lr, expected_lr)
+        self.assertEqual(optimizer.alpha, expected_alpha)
+        self.assertEqual(optimizer.eps, expected_eps)
 
 
 class TestRMSpropStep(unittest.TestCase):

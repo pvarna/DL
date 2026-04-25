@@ -1,0 +1,267 @@
+import unittest
+
+import torch
+
+from dl_lib.nn import Conv2d
+
+
+class TestConv2dInit(unittest.TestCase):
+
+    def test_when_called_with_in_channels_none_then_raises_value_error(self):
+        # Arrange
+        in_channels = None
+        out_channels = 16
+        kernel_size = 3
+
+        # Act & Assert
+        with self.assertRaises(ValueError):
+            Conv2d(in_channels, out_channels, kernel_size)
+
+    def test_when_called_with_out_channels_none_then_raises_value_error(self):
+        # Arrange
+        in_channels = 3
+        out_channels = None
+        kernel_size = 3
+
+        # Act & Assert
+        with self.assertRaises(ValueError):
+            Conv2d(in_channels, out_channels, kernel_size)
+
+    def test_when_called_with_kernel_size_none_then_raises_value_error(self):
+        # Arrange
+        in_channels = 3
+        out_channels = 16
+        kernel_size = None
+
+        # Act & Assert
+        with self.assertRaises(ValueError):
+            Conv2d(in_channels, out_channels, kernel_size)
+
+    def test_when_called_with_valid_arguments_then_initializes_attributes(
+            self):
+        # Arrange
+        in_channels = 3
+        out_channels = 16
+        kernel_size = 3
+        stride = 2
+        padding = 1
+
+        # Act
+        layer = Conv2d(in_channels, out_channels, kernel_size, stride, padding)
+
+        # Assert
+        self.assertEqual(layer.in_channels, in_channels)
+        self.assertEqual(layer.out_channels, out_channels)
+        self.assertEqual(layer.kernel_size, kernel_size)
+        self.assertEqual(layer.stride, stride)
+        self.assertEqual(layer.padding, padding)
+
+    def test_when_optional_parameters_not_specified_then_defaults_are_applied(
+            self):
+        # Arrange
+        expected_stride = 1
+        expected_padding = 0
+
+        # Act
+        layer = Conv2d(in_channels=1, out_channels=1, kernel_size=3)
+
+        # Assert
+        self.assertEqual(layer.stride, expected_stride)
+        self.assertEqual(layer.padding, expected_padding)
+
+    def test_when_bias_not_specified_then_bias_tensor_is_created(self):
+        # Act
+        layer = Conv2d(in_channels=1, out_channels=1, kernel_size=3)
+
+        # Assert
+        self.assertIsNotNone(layer.bias)
+
+    def test_when_constructed_then_weight_shape_is_correct(self):
+        # Arrange
+        in_channels = 3
+        out_channels = 16
+        kernel_size = 3
+        expected = (out_channels, in_channels, kernel_size, kernel_size)
+
+        # Act
+        layer = Conv2d(in_channels, out_channels, kernel_size)
+        actual = layer.weight.shape
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_constructed_with_tuple_kernel_then_weight_shape_is_correct(
+            self):
+        # Arrange
+        in_channels = 3
+        out_channels = 16
+        kernel_size = (3, 5)
+        expected = (out_channels, in_channels, 3, 5)
+
+        # Act
+        layer = Conv2d(in_channels, out_channels, kernel_size)
+        actual = layer.weight.shape
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_bias_is_true_then_bias_shape_is_correct(self):
+        # Arrange
+        out_channels = 16
+        expected = (out_channels, )
+
+        # Act
+        layer = Conv2d(in_channels=3,
+                       out_channels=out_channels,
+                       kernel_size=3,
+                       bias=True)
+        actual = layer.bias.shape
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_bias_is_false_then_bias_is_none(self):
+        # Act
+        layer = Conv2d(in_channels=3,
+                       out_channels=16,
+                       kernel_size=3,
+                       bias=False)
+
+        # Assert
+        self.assertIsNone(layer.bias)
+
+    def test_when_constructed_then_weights_are_in_valid_range(self):
+        # Arrange
+        in_channels = 3
+        kernel_size = 3
+        sqrt_k = (1 / (in_channels * kernel_size * kernel_size))**0.5
+
+        # Act
+        layer = Conv2d(in_channels, out_channels=16, kernel_size=kernel_size)
+
+        # Assert
+        self.assertTrue((layer.weight >= -sqrt_k).all()
+                        and (layer.weight <= sqrt_k).all())
+
+
+class TestConv2dForward(unittest.TestCase):
+
+    def test_when_called_then_returns_tensor(self):
+        # Arrange
+        x = torch.randn(1, 1, 5, 5)
+        expected = torch.Tensor
+
+        # Act
+        actual = Conv2d(in_channels=1, out_channels=1, kernel_size=3)(x)
+
+        # Assert
+        self.assertIsInstance(actual, expected)
+
+    def test_when_called_then_output_shape_is_correct(self):
+        # Arrange
+        x = torch.randn(1, 1, 5, 5)
+        expected = (1, 1, 3, 3)
+
+        # Act
+        actual = Conv2d(in_channels=1, out_channels=1, kernel_size=3)(x).shape
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_called_with_stride_2_then_output_shape_is_correct(self):
+        # Arrange
+        x = torch.randn(1, 1, 6, 6)
+        expected = (1, 1, 2, 2)
+
+        # Act
+        actual = Conv2d(in_channels=1, out_channels=1, kernel_size=3,
+                        stride=2)(x).shape
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_called_with_integer_padding_then_output_shape_accounts_for_padding(
+            self):
+        # Arrange
+        x = torch.randn(1, 1, 5, 5)
+        expected = (1, 1, 5, 5)
+
+        # Act
+        actual = Conv2d(in_channels=1,
+                        out_channels=1,
+                        kernel_size=3,
+                        padding=1)(x).shape
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_called_with_padding_same_then_output_shape_equals_input_shape(
+            self):
+        # Arrange
+        x = torch.randn(1, 1, 5, 5)
+        expected = (1, 1, 5, 5)
+
+        # Act
+        actual = Conv2d(in_channels=1,
+                        out_channels=1,
+                        kernel_size=3,
+                        padding='same')(x).shape
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_called_with_multiple_input_channels_then_output_shape_is_correct(
+            self):
+        # Arrange
+        x = torch.randn(1, 3, 5, 5)
+        expected = (1, 16, 3, 3)
+
+        # Act
+        actual = Conv2d(in_channels=3, out_channels=16, kernel_size=3)(x).shape
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_called_with_batch_size_greater_than_one_then_output_shape_is_correct(
+            self):
+        # Arrange
+        x = torch.randn(4, 1, 5, 5)
+        expected = (4, 1, 3, 3)
+
+        # Act
+        actual = Conv2d(in_channels=1, out_channels=1, kernel_size=3)(x).shape
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_called_with_known_weights_then_output_matches_expected(self):
+        # Arrange
+        layer = Conv2d(in_channels=1,
+                       out_channels=1,
+                       kernel_size=3,
+                       bias=False)
+        layer.weight = torch.ones(1, 1, 3, 3)
+        x = torch.ones(1, 1, 3, 3)
+        expected = 9.0
+
+        # Act
+        actual = layer(x)[0, 0, 0, 0].item()
+
+        # Assert
+        self.assertEqual(actual, expected)
+
+    def test_when_bias_is_false_then_output_does_not_include_bias(self):
+        # Arrange
+        layer = Conv2d(in_channels=1,
+                       out_channels=1,
+                       kernel_size=3,
+                       bias=False)
+        layer.weight = torch.zeros(1, 1, 3, 3)
+        x = torch.randn(1, 1, 5, 5)
+        expected = torch.zeros(1, 1, 3, 3)
+
+        # Act
+        actual = layer(x)
+
+        # Assert
+        self.assertTrue(torch.allclose(actual, expected))
